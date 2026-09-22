@@ -1,0 +1,106 @@
+/*
+ * EPUB / HTML 出力の見た目。web 版 (src/styles/book.css) と同じクラス名を使う。
+ * EPUB には Starlight の CSS 変数が無いので、色は直接書く。
+ */
+
+body {
+  line-height: 1.8;
+}
+
+code, pre {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-size: 0.9em;
+}
+
+pre {
+  padding: 0.6em 0.8em;
+  background-color: #f5f6fa;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+th, td {
+  border: 1px solid #d5d8e2;
+  padding: 0.3em 0.6em;
+}
+
+/* 「実装から見ると」コラム */
+.book-column {
+  margin: 1.4em 0;
+  border: 1px solid #d5d8e2;
+  border-left: 4px solid #4c5fd5;
+  border-radius: 4px;
+  background-color: #f8f9fc;
+  page-break-inside: avoid;
+}
+
+.book-column__head {
+  padding: 0.4em 0.8em;
+  border-bottom: 1px solid #d5d8e2;
+  color: #3b4ba8;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.book-column__version {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-size: 0.85em;
+  font-weight: normal;
+  color: #555b6e;
+}
+
+.book-column__label + .book-column__version::before {
+  content: "  ";
+}
+
+.book-column__body {
+  padding: 0.2em 0.8em 0.6em;
+  font-size: 0.95em;
+}
+
+/* 注意書き */
+.book-aside {
+  margin: 1.2em 0;
+  padding: 0.2em 0.8em;
+  border-left: 4px solid #3b7dd8;
+  background-color: #f6f8fc;
+  page-break-inside: avoid;
+}
+
+.book-aside__title {
+  font-weight: bold;
+  color: #2a5ba8;
+}
+
+.book-aside--tip {
+  border-left-color: #8b5cf6;
+  background-color: #f8f5fe;
+}
+
+.book-aside--tip .book-aside__title {
+  color: #6d3fd1;
+}
+
+.book-aside--caution {
+  border-left-color: #d97706;
+  background-color: #fdf7ee;
+}
+
+.book-aside--caution .book-aside__title {
+  color: #a95c05;
+}
+
+.book-aside--danger {
+  border-left-color: #dc2626;
+  background-color: #fdf3f3;
+}
+
+.book-aside--danger .book-aside__title {
+  color: #b01d1d;
+}

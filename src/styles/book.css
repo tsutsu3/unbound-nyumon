@@ -1,0 +1,118 @@
+/*
+ * 本文の見た目。Starlight のカスタム CSS として読み込む。
+ * 色は Starlight の CSS 変数だけを使い、light / dark の切り替えを自前で持たない。
+ */
+
+/* ------------------------------------------------------------------ *
+ * 「実装から見ると」コラム
+ *
+ * src/plugins/book-columns.mjs が column Directive から生成する。
+ * Note / Tip などの Aside とは別の見た目にして、読み飛ばせる塊だと分かるようにする
+ * (book.md §4.3: コラムを読まなくても正しく設定できる)。
+ * ------------------------------------------------------------------ */
+
+.book-column {
+  /* Aside の 4 色 (blue / purple / orange / red) を使わず、サイトのアクセント色を使う。 */
+  --book-column-accent: var(--sl-color-accent);
+  --book-column-text: var(--sl-color-text-accent);
+  margin: 1.5rem 0;
+  border: 1px solid var(--sl-color-gray-5);
+  border-inline-start: 4px solid var(--book-column-accent);
+  border-radius: 0.4rem;
+  background-color: var(--sl-color-gray-7, var(--sl-color-gray-6));
+}
+
+.book-column__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+  color: var(--book-column-text);
+  font-size: var(--sl-text-sm);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.book-column__icon {
+  flex: none;
+  color: var(--book-column-accent);
+}
+
+.book-column__label {
+  letter-spacing: 0.02em;
+}
+
+/* バージョンは定位置に置く。CI が落ちたときにどのコラムを直すか特定するため (book.md §4.3)。 */
+.book-column__version {
+  margin-inline-start: auto;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.25rem;
+  color: var(--sl-color-gray-2);
+  font-family: var(--__sl-font-mono, monospace);
+  font-size: var(--sl-text-xs);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.book-column__body {
+  padding: 0.85rem 1rem 1rem;
+}
+
+.book-column__body > :first-child {
+  margin-top: 0;
+}
+
+.book-column__body > :last-child {
+  margin-bottom: 0;
+}
+
+/* コラム内に見出しは置かない。置かれてしまった場合でも本文の見出しと混ざらないようにする。 */
+.book-column__body :is(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--sl-text-body);
+  margin-top: 1rem;
+}
+
+@media (max-width: 30rem) {
+  .book-column__head {
+    flex-wrap: wrap;
+  }
+
+  .book-column__version {
+    margin-inline-start: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 本文の組み
+ * ------------------------------------------------------------------ */
+
+/* 日本語の本文は行間を少し広く取る。 */
+.sl-markdown-content {
+  line-height: 1.85;
+}
+
+/* `local-zone` のような長い設定名が行からはみ出さないようにする。 */
+.sl-markdown-content :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+
+/* 表が横に伸びたときに、ページ全体を横スクロールさせない。 */
+.sl-markdown-content table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* ------------------------------------------------------------------ *
+ * 印刷 (ブラウザから PDF にする場合。配布用 PDF は Pandoc 側で作る)
+ * ------------------------------------------------------------------ */
+
+@media print {
+  .book-column {
+    break-inside: avoid;
+    background-color: transparent;
+  }
+}

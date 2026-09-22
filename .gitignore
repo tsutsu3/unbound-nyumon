@@ -22,3 +22,8 @@ pnpm-debug.log*
 /references/
 /planning/
 /research/
+
+/private/
+
+# generated book artifacts (pandoc/build.sh / scripts/export-book.mjs)
+/build/

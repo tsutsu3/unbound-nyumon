@@ -1,0 +1,51 @@
+% A5 組版 (luatexja + ltjsbook) 用のプリアンブル。
+% pandoc/build.sh が --include-in-header で読み込む。
+
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+
+\definecolor{columnframe}{HTML}{4C5FD5}
+\definecolor{columnback}{HTML}{F5F6FA}
+\definecolor{noteframe}{HTML}{3B7DD8}
+\definecolor{tipframe}{HTML}{8B5CF6}
+\definecolor{cautionframe}{HTML}{D97706}
+\definecolor{dangerframe}{HTML}{DC2626}
+
+% 「実装から見ると」コラム。引数はバージョン (例: Unbound 1.26.0)。
+% 読み飛ばせる塊として、本文から独立した枠にする (book.md §4.3)。
+\newtcolorbox{implcolumn}[1]{%
+  enhanced,
+  breakable,
+  colback=columnback,
+  colframe=columnframe,
+  coltitle=white,
+  fonttitle=\bfseries\small,
+  fontupper=\small,
+  boxrule=0.4pt,
+  leftrule=2pt,
+  arc=1mm,
+  top=4pt, bottom=4pt,
+  title={実装から見ると\hfill\texttt{\footnotesize #1}},
+}
+
+% 注意書き。引数はタイトル。
+\newtcolorbox{bookaside}[2]{%
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=#1,
+  coltitle=#1,
+  colbacktitle=white,
+  fonttitle=\bfseries\small,
+  fontupper=\small,
+  boxrule=0.4pt,
+  leftrule=2pt,
+  arc=0.5mm,
+  top=4pt, bottom=4pt,
+  title={#2},
+}
+
+\newenvironment{bookasidenote}[1]{\begin{bookaside}{noteframe}{#1}}{\end{bookaside}}
+\newenvironment{bookasidetip}[1]{\begin{bookaside}{tipframe}{#1}}{\end{bookaside}}
+\newenvironment{bookasidecaution}[1]{\begin{bookaside}{cautionframe}{#1}}{\end{bookaside}}
+\newenvironment{bookasidedanger}[1]{\begin{bookaside}{dangerframe}{#1}}{\end{bookaside}}
