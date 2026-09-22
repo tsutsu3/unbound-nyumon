@@ -34,16 +34,16 @@ th, td {
 .book-column {
   margin: 1.4em 0;
   border: 1px solid #d5d8e2;
-  border-left: 4px solid #4c5fd5;
+  border-left: 4px solid #2b2a8f;
   border-radius: 4px;
-  background-color: #f8f9fc;
+  background-color: #f6f7fb;
   page-break-inside: avoid;
 }
 
 .book-column__head {
   padding: 0.4em 0.8em;
   border-bottom: 1px solid #d5d8e2;
-  color: #3b4ba8;
+  color: #2b2a8f;
   font-size: 0.9em;
   font-weight: bold;
 }

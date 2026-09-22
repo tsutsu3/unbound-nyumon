@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Unbound入門">
+  <!-- 本書独自のマーク (ダーク背景用)。mark-light.svg と同じ図形で色だけ違う。 -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4">
+    <path d="M16 6 8 16" stroke="#4a4c8a"/>
+    <path d="M16 6 24 16 16 26" stroke="#a9a8f5"/>
+  </g>
+  <circle cx="16" cy="6" r="3.4" fill="#a9a8f5"/>
+  <circle cx="8" cy="16" r="3" fill="#4a4c8a"/>
+  <circle cx="24" cy="16" r="3.4" fill="#a9a8f5"/>
+  <circle cx="16" cy="26" r="4" fill="#1fc6da"/>
+</svg>

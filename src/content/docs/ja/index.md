@@ -2,6 +2,20 @@
 title: Unbound入門
 description: DNS の基礎から Unbound の設定までを、実測とソースコードで裏を取りながら解説する入門書です。
 tableOfContents: false
+# 本のトップなので splash にせず、サイドバー (目次) を残す
+hero:
+  tagline: DNS の基礎から、Unbound の設定を目的に応じて組み立てられるところまで。挙動は実測とソースコードで確かめます。
+  image:
+    file: ../../../assets/mark-dark.svg
+    alt: ""
+  # 章を公開したらボタンを足す。存在しないページへはリンクしない。
+  # actions:
+  #   - text: 読み始める
+  #     link: /ja/01-dns-minimum/01-actors/
+  #     icon: right-arrow
+  #   - text: Cookbook
+  #     link: /ja/09-cookbook/lan-hostnames/
+  #     variant: minimal
 ---
 
 Unbound は、再帰問い合わせ、キャッシュ、DNSSEC 検証を行う DNS リゾルバーです。本書は、DNS の基礎から始めて、Unbound の設定を目的に応じて組み立てられる状態を目指します。

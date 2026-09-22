@@ -91,7 +91,20 @@ export default defineConfig({
       locales: Object.fromEntries(
         Object.entries(locales).map(([key, { label, lang }]) => [key, { label, lang }]),
       ),
-      customCss: ["./src/styles/book.css"],
+      // 独自のマークと書名で組む。Unbound のロゴは使わない (公式の本と誤解されないため)。
+      logo: {
+        light: "./src/assets/mark-light.svg",
+        dark: "./src/assets/mark-dark.svg",
+        alt: "",
+      },
+      // フォントはサイトに同梱して配信する (外部 CDN に依存しない)。
+      customCss: [
+        "@fontsource-variable/noto-sans-jp/wght.css",
+        "@fontsource-variable/lexend/wght.css",
+        "@fontsource-variable/jetbrains-mono/wght.css",
+        "./src/styles/theme.css",
+        "./src/styles/book.css",
+      ],
       expressiveCode: {
         // 本文の設定例は ```conf で書く。Unbound の設定ファイルに専用の文法は無いので
         // ini として色を付ける。
