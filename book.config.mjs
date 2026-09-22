@@ -1,8 +1,11 @@
 // 本の構成の単一ソース。
 //
-// Starlight のサイドバー (astro.config.mjs) と Pandoc 用のエクスポート
-// (scripts/export-book.mjs) は、どちらもこのファイルを読む。
-// 章立ては planning/book.md と planning/chapters/*.md に従う。
+// Starlight の設定 (astro.config.mjs)、コラムの変換 (src/plugins/book-columns.mjs)、
+// Pandoc 用のエクスポート (scripts/export-book.mjs)、検査 (scripts/check-directives.mjs) は、
+// どれもこのファイルを読む。章立ては planning/book.md と planning/chapters/*.md に従う。
+//
+// 読者に見える文字列はロケールごとに `locales` に置く。英語版 (Phase 3) を始めるときは、
+// `locales` に `en` を足し、章の `translations` と src/content/docs/en/ を用意する。
 
 import { existsSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -13,6 +16,79 @@ export const DOCS_ROOT = fileURLToPath(new URL("./src/content/docs", import.meta
 
 /** 既定ロケール。英語版は Phase 3 (publishing.md §7)。 */
 export const DEFAULT_LOCALE = "ja";
+
+/**
+ * ロケールごとの設定。キーは URL の接頭辞 (`/ja/`) と `src/content/docs/<key>/` になる。
+ *
+ * - `label` / `lang`    Starlight の言語切り替えと `<html lang>`
+ * - `title`             サイトと PDF / EPUB の書名
+ * - `description`       サイトの説明
+ * - `pandocLang`        PDF / EPUB のメタデータ `lang`
+ * - `columnChars`       コラム本体の字数の目安 [下限, 上限]。無ければ字数を検査しない
+ *                       (book.md §4.3 の 400〜800 字は日本語の文字数であり、英語には当てはまらない)
+ * - `strings`           本文の外に出る文言
+ */
+export const locales = {
+  ja: {
+    label: "日本語",
+    lang: "ja",
+    title: "Unbound入門",
+    description:
+      "DNS の基礎から Unbound の設定までを、実測とソースコードで裏を取りながら解説する入門書。",
+    pandocLang: "ja-JP",
+    columnChars: [400, 800],
+    strings: {
+      /** コラムの名称。1 種類に固定する (book.md §4.3) */
+      column: "実装から見ると",
+      /** 注意書きの既定タイトル。web は Starlight の翻訳が出すので、PDF / EPUB 用 */
+      aside: { note: "ノート", tip: "ヒント", caution: "注意", danger: "危険" },
+      paidBadge: "有料版",
+      introduction: "はじめに",
+      devPages: "執筆用 (dev only)",
+      devSample: "開発用サンプル",
+    },
+  },
+  // 英語版 (Phase 3) の雛形。書名とコラム名は Phase 3 で決める (book.md §1.2)。
+  // en: {
+  //   label: "English",
+  //   lang: "en",
+  //   title: "TODO",
+  //   description: "TODO",
+  //   pandocLang: "en-US",
+  //   strings: {
+  //     column: "TODO",
+  //     aside: { note: "Note", tip: "Tip", caution: "Caution", danger: "Danger" },
+  //     paidBadge: "Paid edition",
+  //     introduction: "Introduction",
+  //     devPages: "Drafting (dev only)",
+  //     devSample: "Development sample",
+  //   },
+  // },
+};
+
+/** ロケールの設定。存在しないキーなら例外にする (綴り間違いを黙って既定に落とさない)。 */
+export function localeConfig(locale) {
+  const config = locales[locale];
+  if (!config) {
+    throw new Error(`ロケール "${locale}" は book.config.mjs の locales にありません。`);
+  }
+  return config;
+}
+
+/**
+ * ファイルのパスからロケールを割り出す。`src/content/docs/<locale>/` の外や、
+ * 未定義のロケールなら既定ロケールを返す。
+ */
+export function localeOfPath(file) {
+  const rel = path.relative(DOCS_ROOT, file);
+  const [head] = rel.split(path.sep);
+  return !rel.startsWith("..") && head in locales ? head : DEFAULT_LOCALE;
+}
+
+/** 章の見出し。`translations` に無いロケールでは既定ロケールの `label` を使う。 */
+export function chapterLabel(chapter, locale = DEFAULT_LOCALE) {
+  return chapter.translations?.[locale] ?? chapter.label;
+}
 
 /**
  * 公開サイトの URL。canonical と sitemap に使う。
@@ -27,7 +103,8 @@ export const UNBOUND_VERSION = "1.26.0";
  * 章の一覧。
  *
  * - `dir`      ロケール配下のディレクトリ名。サイドバーの autogenerate に渡す
- * - `label`    サイドバーと PDF の章見出し
+ * - `label`    サイドバーと PDF の章見出し (既定ロケール)
+ * - `translations`  他ロケールの章見出し。`{ en: "Chapter 1 ..." }`。無ければ `label` を使う
  * - `access`   "free" = 無料 web 版にも出す / "paid" = PDF・EPUB のみ (publishing.md §3)
  * - `pages`    順序を明示したい章だけ書く。省略時はファイル名昇順
  * - `columns`  「実装から見ると」コラムの上限本数。章仕様の値 (book.md §4.3 は 1 章 3〜4 本まで)。
@@ -98,8 +175,8 @@ export const chapters = [
   },
 ];
 
-/** 執筆中だけサイドバーに出す開発用ページ。本番ビルドには含めない。 */
-export const devPages = [{ dir: "dev", label: "執筆用 (dev only)" }];
+/** 執筆中だけサイドバーに出す開発用ページ。本番ビルドには含めない。見出しは `strings.devPages`。 */
+export const devPages = [{ dir: "dev" }];
 
 const PAGE_EXT = /\.(md|mdx)$/;
 

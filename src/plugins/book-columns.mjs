@@ -6,10 +6,13 @@
  * このプラグインは独自の `column` だけを担当する。
  * Pandoc 側は export-book.mjs と pandoc/filters/asides.lua が同じ記法を変換する。
  * 記法を変えるときは両方を直す。
+ *
+ * コラムの名称はロケールごとに book.config.mjs の `strings.column` が持つ。
+ * ロケールはファイルのパス (`src/content/docs/<locale>/`) から決める。
  */
 
-/** コラムの名称は 1 種類に固定する (book.md §4.3)。 */
-export const COLUMN_LABEL = "実装から見ると";
+import { fileURLToPath } from "node:url";
+import { DEFAULT_LOCALE, localeOfPath, locales } from "../../book.config.mjs";
 
 /** タイトル行に必ず入れる 3 桁バージョン (book.md §4.3 / style-guide.md §18)。 */
 export const COLUMN_VERSION_PATTERN = /^Unbound (\d+\.\d+\.\d+)$/;
@@ -24,6 +27,8 @@ export function bookColumns() {
     name: "book-columns",
     containerDirective(node, ctx) {
       if (node.name !== "column") return;
+      const locale = ctx.fileURL ? localeOfPath(fileURLToPath(ctx.fileURL)) : DEFAULT_LOCALE;
+      const columnLabel = locales[locale].strings.column;
 
       const body = [...node.children];
       const label = body[0];
@@ -46,24 +51,24 @@ export function bookColumns() {
           "コラムにバージョンがありません。`:::column[Unbound 1.26.0]` の形で 3 桁のバージョンを書いてください。",
         );
       }
-      return column(version, body);
+      return column(columnLabel, version, body);
     },
   };
 }
 
 /** 「実装から見ると」コラム。Starlight の Aside とは別の見た目にする。 */
-function column(version, body) {
+function column(columnLabel, version, body) {
   return element(
     "aside",
     {
       class: "book-column",
-      "aria-label": `${COLUMN_LABEL} (Unbound ${version})`,
+      "aria-label": `${columnLabel} (Unbound ${version})`,
     },
     [
       element("p", { class: "book-column__head" }, [
         { type: "html", value: COLUMN_ICON },
         element("span", { class: "book-column__label" }, [
-          { type: "text", value: COLUMN_LABEL },
+          { type: "text", value: columnLabel },
         ]),
         element("span", { class: "book-column__version" }, [
           { type: "text", value: `Unbound ${version}` },

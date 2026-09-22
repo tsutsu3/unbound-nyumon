@@ -16,25 +16,68 @@
  * ページ間のリンク (`/ja/05-local-dns/03-local-records/`) は、PDF / EPUB では
  * 文書内リンクに置き換える。有料章は web に URL を持たないため、外部 URL にはしない。
  *
+ * 書名・コラム名など本文の外に出る文言は、book.config.mjs の `locales` から
+ * build/book/meta.yaml に書き出す。pandoc/build.sh が `--metadata-file` で渡し、
+ * pandoc/filters/asides.lua が `book-strings` を読む。
+ *
  * 使い方:
- *   node scripts/export-book.mjs            全章 (PDF / EPUB 用)
- *   node scripts/export-book.mjs --free     無料公開範囲だけ
+ *   node scripts/export-book.mjs                 全章 (PDF / EPUB 用)
+ *   node scripts/export-book.mjs --free          無料公開範囲だけ
+ *   node scripts/export-book.mjs --sample        記法サンプルだけ
+ *   node scripts/export-book.mjs --locale en     ロケールを指定する (既定は book.config.mjs の DEFAULT_LOCALE)
  */
 
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { chapters, DEFAULT_LOCALE, DOCS_ROOT, listPageFiles } from "../book.config.mjs";
+import {
+  chapterLabel,
+  chapters,
+  DEFAULT_LOCALE,
+  DOCS_ROOT,
+  listPageFiles,
+  localeConfig,
+  locales,
+  SITE_URL,
+} from "../book.config.mjs";
 import { readPage, markFenced } from "./lib/markdown.mjs";
 import { ASIDE_NAMES, COLUMN_NAME, parseOpening } from "./lib/directives.mjs";
 
 const freeOnly = process.argv.includes("--free");
 const sampleOnly = process.argv.includes("--sample");
+const locale = argValue("--locale") ?? DEFAULT_LOCALE;
+const config = localeConfig(locale);
+const { strings } = config;
+const LOCALE_ROOT = path.join(DOCS_ROOT, locale);
 const OUT_DIR = path.resolve(path.join(DOCS_ROOT, "../../../build/book"));
-const INDEX_FILE = path.join(DOCS_ROOT, DEFAULT_LOCALE, "index.md");
-const SAMPLE_FILE = path.join(DOCS_ROOT, DEFAULT_LOCALE, "dev", "notation-sample.md");
+const INDEX_FILE = path.join(LOCALE_ROOT, "index.md");
+const LINK_PATTERN = new RegExp(
+  `\\]\\(\\/(${Object.keys(locales).join("|")})\\/([^)#\\s]*)(#[^)\\s]*)?\\)`,
+  "g",
+);
+const SAMPLE_FILE = path.join(LOCALE_ROOT, "dev", "notation-sample.md");
 
 rmSync(OUT_DIR, { recursive: true, force: true });
 mkdirSync(OUT_DIR, { recursive: true });
+
+// JSON は YAML としても読めるので、そのまま Pandoc のメタデータファイルにする。
+writeFileSync(
+  path.join(OUT_DIR, "meta.yaml"),
+  `${JSON.stringify(
+    {
+      title: config.title,
+      lang: config.pandocLang,
+      "book-strings": {
+        column: strings.column,
+        "aside-note": strings.aside.note,
+        "aside-tip": strings.aside.tip,
+        "aside-caution": strings.aside.caution,
+        "aside-danger": strings.aside.danger,
+      },
+    },
+    null,
+    2,
+  )}\n`,
+);
 
 const written = [];
 
@@ -47,7 +90,7 @@ if (sampleOnly) {
   const out = path.join(OUT_DIR, "00-introduction.md");
   writeFileSync(
     out,
-    `# 開発用サンプル {#c-dev}\n\n## ${sample.frontmatter.title} {#p-dev-notation-sample}\n\n${transform(sample.body)}\n`,
+    `# ${strings.devSample} {#c-dev}\n\n## ${sample.frontmatter.title} {#p-dev-notation-sample}\n\n${transform(sample.body)}\n`,
   );
   written.push({ file: out, pages: 1 });
 } else {
@@ -58,7 +101,7 @@ if (sampleOnly) {
     const out = path.join(OUT_DIR, "00-introduction.md");
     writeFileSync(
       out,
-      `# はじめに {#p-index .unnumbered}\n\n${transform(introduction.body)}\n`,
+      `# ${strings.introduction} {#p-index .unnumbered}\n\n${transform(introduction.body)}\n`,
     );
     written.push({ file: out, pages: 1 });
   }
@@ -66,7 +109,7 @@ if (sampleOnly) {
   for (const chapter of chapters) {
     if (freeOnly && chapter.access === "paid") continue;
 
-    const dir = path.join(DOCS_ROOT, DEFAULT_LOCALE, chapter.dir);
+    const dir = path.join(LOCALE_ROOT, chapter.dir);
     const files = orderPages(dir, chapter.pages);
     const parts = [];
 
@@ -84,7 +127,7 @@ if (sampleOnly) {
     if (parts.length === 0) continue;
 
     const out = path.join(OUT_DIR, `${chapter.dir}.md`);
-    writeFileSync(out, `# ${chapter.label} {#${chapterSlug(chapter.dir)}}\n\n${parts.join("\n\n")}\n`);
+    writeFileSync(out, `# ${chapterLabel(chapter, locale)} {#${chapterSlug(chapter.dir)}}\n\n${parts.join("\n\n")}\n`);
     written.push({ file: out, pages: parts.length });
   }
 }
@@ -92,7 +135,17 @@ if (sampleOnly) {
 for (const { file, pages } of written) {
   console.log(`${path.relative(process.cwd(), file)} (${pages} ページ)`);
 }
-console.log(`${written.length} ファイルを ${path.relative(process.cwd(), OUT_DIR)} へ出力しました。`);
+console.log(`${written.length} ファイルを ${path.relative(process.cwd(), OUT_DIR)} へ出力しました (${locale})。`);
+
+/** `--name value` と `--name=value` の両方を受け付ける。 */
+function argValue(name) {
+  const args = process.argv.slice(2);
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === name) return args[i + 1];
+    if (args[i].startsWith(`${name}=`)) return args[i].slice(name.length + 1);
+  }
+  return undefined;
+}
 
 /** 章の中のページ順。`pages` があればその順、なければファイル名順。 */
 function orderPages(dir, pages) {
@@ -123,7 +176,7 @@ function chapterSlug(dir) {
 }
 
 function pageSlug(file) {
-  const rel = path.relative(path.join(DOCS_ROOT, DEFAULT_LOCALE), file).replace(/\.mdx?$/, "");
+  const rel = path.relative(LOCALE_ROOT, file).replace(/\.mdx?$/, "");
   return `p-${rel.split(path.sep).join("-")}`;
 }
 
@@ -165,11 +218,16 @@ function rewriteDirective(line) {
 }
 
 /**
- * `/ja/05-local-dns/03-local-records/` -> `#p-05-local-dns-03-local-records`
- * `/ja/05-local-dns/03-local-records/#ttl` -> `#ttl`
+ * 同じロケールのページへのリンクは文書内リンクにする。
+ *   /ja/05-local-dns/03-local-records/      -> #p-05-local-dns-03-local-records
+ *   /ja/05-local-dns/03-local-records/#ttl  -> #ttl
+ *
+ * 別ロケールのページはこの本に入らないので、web 版の URL にする。
+ *   /en/cookbook/lan-hostnames/  -> https://.../en/cookbook/lan-hostnames/
  */
 function rewriteLinks(line) {
-  return line.replace(/\]\(\/(ja|en)\/([^)#\s]*)(#[^)\s]*)?\)/g, (_match, _locale, target, hash) => {
+  return line.replace(LINK_PATTERN, (match, linkLocale, target, hash) => {
+    if (linkLocale !== locale) return `](${SITE_URL.replace(/\/$/, "")}/${linkLocale}/${target}${hash ?? ""})`;
     if (hash) return `](${hash})`;
     const slug = target.replace(/\/$/, "").split("/").join("-");
     return `](#p-${slug})`;

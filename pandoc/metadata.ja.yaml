@@ -1,6 +1,6 @@
 ---
-title: Unbound入門
-lang: ja-JP
+# 日本語版の組版設定。書名と lang は book.config.mjs の locales から
+# build/book/meta.yaml に書き出され、--metadata-file で渡る。
 documentclass: ltjsbook
 classoption:
   - a5paper

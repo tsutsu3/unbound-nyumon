@@ -8,21 +8,25 @@
   src/content/docs/ では `:::column[Unbound 1.26.0]` と書く。
   scripts/export-book.mjs が Pandoc 用の fenced Div へ書き換える。
 
+  コラム名と注意書きの既定タイトルはロケールごとに違うので、メタデータ `book-strings`
+  (scripts/export-book.mjs が book.config.mjs から build/book/meta.yaml に書き出す) から読む。
+
   出力:
-    LaTeX  \begin{implcolumn}{Unbound 1.26.0} ... \end{implcolumn}
+    LaTeX  \begin{implcolumn}{実装から見ると}{Unbound 1.26.0} ... \end{implcolumn}
            \begin{bookasidenote}{タイトル} ... \end{bookasidenote}
            (定義は pandoc/latex/preamble.tex)
     その他 <div class="book-column"> / <div class="book-aside book-aside--note">
            (見た目は pandoc/epub/style.css)
 ]]
 
-local COLUMN_LABEL = "実装から見ると"
+-- Pandoc(doc) でメタデータから埋める
+local COLUMN_LABEL
 
 local ASIDES = {
-  note = { env = "bookasidenote", class = "note", title = "ノート" },
-  tip = { env = "bookasidetip", class = "tip", title = "ヒント" },
-  caution = { env = "bookasidecaution", class = "caution", title = "注意" },
-  danger = { env = "bookasidedanger", class = "danger", title = "危険" },
+  note = { env = "bookasidenote", class = "note" },
+  tip = { env = "bookasidetip", class = "tip" },
+  caution = { env = "bookasidecaution", class = "caution" },
+  danger = { env = "bookasidedanger", class = "danger" },
 }
 
 local function trim(s)
@@ -60,7 +64,12 @@ end
 
 local function column(version, body)
   if FORMAT:match("latex") then
-    return wrap_latex("implcolumn", "Unbound " .. version, body)
+    local blocks = wrap_latex("implcolumn", "Unbound " .. version, body)
+    blocks[1] = pandoc.RawBlock(
+      "latex",
+      "\\begin{implcolumn}{" .. to_latex(pandoc.Inlines({ pandoc.Str(COLUMN_LABEL) })) .. "}{Unbound " .. version .. "}"
+    )
+    return blocks
   end
   local head = pandoc.Div({
     pandoc.Para({
@@ -85,7 +94,7 @@ local function aside(spec, title_inlines, title_text, body)
   )
 end
 
-function Div(el)
+local function Div(el)
   local title_text = trim(el.attributes["data-title"] or "")
 
   if has_class(el, "column") then
@@ -105,4 +114,26 @@ function Div(el)
   end
 
   return nil
+end
+
+--- メタデータの `book-strings` を読む。無ければ build.sh を通さずに呼ばれているので止める。
+local function load_strings(meta)
+  local strings = meta["book-strings"]
+  if not strings then
+    error("[asides] メタデータ book-strings がありません。pandoc/build.sh から実行してください。")
+  end
+  local function get(key)
+    local value = strings[key]
+    if not value then error("[asides] book-strings." .. key .. " がありません。") end
+    return pandoc.utils.stringify(value)
+  end
+  COLUMN_LABEL = get("column")
+  for name, spec in pairs(ASIDES) do
+    spec.title = get("aside-" .. name)
+  end
+end
+
+function Pandoc(doc)
+  load_strings(doc.meta)
+  return doc:walk({ Div = Div })
 end
