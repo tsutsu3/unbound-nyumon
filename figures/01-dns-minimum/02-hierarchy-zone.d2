@@ -17,7 +17,12 @@ zcom: com. ゾーン {
 zex: example.com. ゾーン {
   ex: example.com.
   www: www.example.com.
-  ex -> www: 委任しない
+
+  note: 委任していないので、\nこの枠の中にある {
+    shape: text
+    style.font-size: 20
+    style.italic: true
+  }
 }
 
 zdev: dev.example.com. ゾーン {
@@ -26,4 +31,4 @@ zdev: dev.example.com. ゾーン {
 
 zroot.root -> zcom.com: 委任（NS）
 zcom.com -> zex.ex: 委任（NS）
-zex.ex -> zdev.dev: 委任する
+zex.ex -> zdev.dev: 委任（NS）
