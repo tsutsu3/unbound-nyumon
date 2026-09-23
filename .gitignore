@@ -34,3 +34,6 @@ pnpm-debug.log*
 /src/content/docs/*/08-dnssec
 /src/content/docs/*/10-operations-troubleshooting
 /src/content/docs/*/appendix/undocumented
+
+# wrangler のローカル状態
+/.wrangler/

@@ -14,7 +14,13 @@
     "book:pdf": "./pandoc/build.sh pdf",
     "book:sample:pdf": "./pandoc/build.sh pdf --sample",
     "book:epub": "./pandoc/build.sh epub",
-    "book:html": "./pandoc/build.sh html"
+    "book:html": "./pandoc/build.sh html",
+    "wrangler": "wrangler",
+    "cf:preview": "wrangler dev --env dev --profile develop",
+    "cf:deploy:dev": "wrangler deploy --env dev --profile develop",
+    "cf:delete:dev": "wrangler delete --env dev --profile develop",
+    "cf:deploy:prd": "wrangler deploy --env prd --profile production",
+    "cf:delete:prd": "wrangler delete --env prd --profile production"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.0",
@@ -25,6 +31,7 @@
     "sharp": "^0.35.3"
   },
   "devDependencies": {
-    "@astrojs/markdown-satteri": "0.4.0"
+    "@astrojs/markdown-satteri": "0.4.0",
+    "wrangler": "^4.136.1"
   }
 }

@@ -125,6 +125,23 @@ $ BOOK_INCLUDE_PRIVATE=1 pnpm build
 $ BOOK_INCLUDE_PRIVATE=1 pnpm dev
 ```
 
+## 配信 (Cloudflare Workers)
+
+`pnpm build` が出す `dist/` を Workers の静的アセットとして配信します。設定は
+`wrangler.jsonc` です。Worker スクリプトは持たず、アセットだけを置きます。
+
+```console
+$ pnpm cf:preview      # ローカルで配信を確認する
+$ pnpm cf:deploy:<prd/dev>   # デプロイする (先に pnpm build)
+```
+
+`public/_redirects` が `/` を `/ja/` へ 301 で飛ばします。存在しない URL には
+`dist/404.html` を 404 で返します (`not_found_handling`)。
+
+非公開ページは `pnpm build` の時点で `dist/` に入りません。ただし
+`BOOK_INCLUDE_PRIVATE=1` を付けてビルドしたまま `pnpm cf:deploy` すると公開されます。
+デプロイ前は環境変数を外した状態でビルドし直してください。
+
 ## 主なファイル
 
 - `book.config.mjs`: 章構成、ページ順、公開区分、ロケールごとの書名と文言
@@ -132,6 +149,8 @@ $ BOOK_INCLUDE_PRIVATE=1 pnpm dev
 - `src/styles/book.css`: Web 用の本文・コラムスタイル
 - `scripts/export-book.mjs`: 共通 Markdown を書籍向けに連結
 - `scripts/link-private.mjs`: 非公開ページへのシンボリックリンク (`pnpm private:link`)
+- `wrangler.jsonc`: Cloudflare Workers の配信設定
+- `public/_redirects`: `/` から既定ロケールへのリダイレクト
 - `scripts/lib/directives.mjs`: `:::` Directive の解釈 (検査と Pandoc 用の書き換えが共有)
 - `scripts/check-directives.mjs`: コラム・注意書きの検査 (`pnpm check`)
 - `pandoc/filters/asides.lua`: Pandoc 用コラム・注意書き変換
