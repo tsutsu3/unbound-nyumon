@@ -8,10 +8,10 @@ hero:
     file: ../../../assets/mark-dark.svg
     alt: ""
   # 章を公開したらボタンを足す。存在しないページへはリンクしない。
-  # actions:
-  #   - text: 読み始める
-  #     link: /ja/01-dns-minimum/01-actors/
-  #     icon: right-arrow
+  actions:
+    - text: 読み始める
+      link: /ja/01-dns-minimum/01-actors/
+      icon: right-arrow
   #   - text: Cookbook
   #     link: /ja/09-cookbook/lan-hostnames/
   #     variant: minimal

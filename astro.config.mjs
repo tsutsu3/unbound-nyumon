@@ -55,7 +55,7 @@ const sidebar = [
     .map((chapter) => ({
       label: chapter.label,
       translations: translate((locale) => chapter.translations?.[locale]),
-      collapsed: true,
+      collapsed: false,
       // i18n を有効にしているので、ここではロケール接頭辞を書かない。
       items: [{ autogenerate: { directory: chapter.dir } }],
       ...(chapter.access === "private"
@@ -76,7 +76,7 @@ const sidebar = [
         .map((page) => ({
           label: defaultStrings.devPages,
           translations: translate((locale) => locales[locale].strings.devPages),
-          collapsed: true,
+          collapsed: false,
           items: [{ autogenerate: { directory: page.dir } }],
         }))
     : []),
