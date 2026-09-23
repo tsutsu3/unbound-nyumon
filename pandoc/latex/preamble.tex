@@ -4,6 +4,16 @@
 
 \usepackage[most]{tcolorbox}
 \usepackage{xcolor}
+\usepackage{caption}
+
+% 図。SVG の固有サイズは d2 の出力任せなので、A5 の紙からはみ出さないよう上限をかける。
+% keepaspectratio があるので、縦長の図は高さ、横長の図は幅で止まる。
+\setkeys{Gin}{width=0.9\linewidth,height=0.72\textheight,keepaspectratio}
+
+% キャプションは本文の alt をそのまま出す (「図1 ...」の番号も alt に書いてある)。
+% LaTeX に採番させると「図 1: 図1 ...」と二重になるため、ラベルを空にする。
+% web (src/plugins/book-figures.mjs) と PDF でキャプションを一致させるため。
+\captionsetup{labelformat=empty,font=small,skip=6pt}
 
 % web のテーマ (src/styles/theme.css) のインディゴに揃える
 \definecolor{columnframe}{HTML}{2B2A8F}

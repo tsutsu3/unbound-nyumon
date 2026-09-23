@@ -1,0 +1,24 @@
+# 図1 スタブリゾルバー / フルリゾルバー / 権威 DNS サーバーの関係と問い合わせの向き
+
+# 本文に載せるときは高さで縮むため、図の中の文字を相対的に大きくしておく。
+**.style.font-size: 24
+(** -> **)[*].style.font-size: 20
+(** <-> **)[*].style.font-size: 20
+direction: down
+
+pc: PC {
+  app: アプリケーション
+  stub: スタブリゾルバー
+  app -> stub: 名前を尋ねる
+}
+
+full: フルリゾルバー（Unbound）
+
+auth: 権威 DNS サーバー {
+  root: ルート（.）
+  tld: com.
+  apex: example.com.
+}
+
+pc.stub -> full: 名前解決要求（1回）
+full <-> auth: 答えが得られるまで\n複数回問い合わせる

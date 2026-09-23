@@ -121,7 +121,7 @@ export const UNBOUND_VERSION = "1.26.0";
 export const chapters = [
   {
     dir: "01-dns-minimum",
-    label: "第1章 Unbound のための DNS 最小限",
+    label: "第1章 Unbound のための DNS",
     access: "public",
     columns: 0,
   },

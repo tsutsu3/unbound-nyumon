@@ -77,6 +77,40 @@ Lua filter により PDF / EPUB 用の枠へ変換します。詳細と実表示
 $ pnpm check
 ```
 
+## 図
+
+図の生成元は `figures/` に `.d2` で置き、SVG を生成して本文から参照します。生成物も
+リポジトリに入れるので、図を直さないビルドでは d2 は不要です。
+
+```console
+$ pnpm figures
+```
+
+```text
+figures/01-dns-minimum/01-actors.d2
+        -> public/figures/01-dns-minimum/01-actors.svg
+```
+
+本文からは通常の画像として参照します。**alt にはキャプションを書きます。**
+
+```md
+![図1 スタブリゾルバー、フルリゾルバー、権威 DNS サーバーの関係と問い合わせの向き](/figures/01-dns-minimum/01-actors.svg)
+```
+
+画像だけの段落は `src/plugins/book-figures.mjs` が `<figure>` と `<figcaption>` に変換し、
+alt をそのままキャプションに出します。Pandoc も同じ Markdown を図として扱うため、web と
+PDF でキャプションが一致します。alt が空の図はビルドエラーにします。
+
+図番号 (「図1」) は alt に書いた文字列を使います。LaTeX の自動採番は
+`pandoc/latex/preamble.tex` で止めてあります (二重に採番されるため)。
+
+大きさは本文側で指定しません。web は `src/styles/book.css` の `.book-figure` が高さに
+上限をかけ、PDF は同 `preamble.tex` の `\setkeys{Gin}{...}` が紙からはみ出さないようにします。
+高さで縮むと図の中の文字も小さくなるので、`.d2` 側でフォントサイズを上げてあります。
+
+日本語のラベルには和文フォントが必要です。`pnpm figures` は `fc-match` で探しますが、
+指定する場合は `BOOK_FIGURE_FONT` に `.ttf` のパスを渡します (d2 は `.ttf` だけを読みます)。
+
 ## 英語版を足すとき
 
 プラグインとビルドはロケールに対応済みなので、次の作業だけでweb・PDF / EPUB・検査が追従します。
@@ -146,7 +180,11 @@ $ pnpm cf:deploy:<prd/dev>   # デプロイする (先に pnpm build)
 
 - `book.config.mjs`: 章構成、ページ順、公開区分、ロケールごとの書名と文言
 - `src/plugins/book-columns.mjs`: Web 用コラム変換
-- `src/styles/book.css`: Web 用の本文・コラムスタイル
+- `src/plugins/book-figures.mjs`: 画像だけの段落を figure + figcaption へ変換
+- `src/styles/book.css`: Web 用の本文・コラム・図のスタイル
+- `figures/`: 図の生成元 (`.d2`)
+- `public/figures/`: 生成した図の SVG (`pnpm figures`)
+- `scripts/build-figures.mjs`: 図の生成 (`pnpm figures`)
 - `scripts/export-book.mjs`: 共通 Markdown を書籍向けに連結
 - `scripts/link-private.mjs`: 非公開ページへのシンボリックリンク (`pnpm private:link`)
 - `wrangler.jsonc`: Cloudflare Workers の配信設定

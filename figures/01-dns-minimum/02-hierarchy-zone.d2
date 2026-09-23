@@ -1,0 +1,34 @@
+# 図2 DNS の階層と委任。ゾーンの境界 (ゾーンカット) を明示する
+
+# 本文に載せるときは高さで縮むため、図の中の文字を相対的に大きくしておく。
+**.style.font-size: 24
+(** -> **)[*].style.font-size: 20
+(** <-> **)[*].style.font-size: 20
+direction: down
+
+zroot: ルートゾーン {
+  root: "."
+}
+
+zcom: com. ゾーン {
+  com: com.
+}
+
+zex: example.com. ゾーン {
+  ex: example.com.
+  www: www.example.com.
+
+  note: 委任していないので、\nこの枠の中にある {
+    shape: text
+    style.font-size: 20
+    style.italic: true
+  }
+}
+
+zdev: dev.example.com. ゾーン {
+  dev: dev.example.com.
+}
+
+zroot.root -> zcom.com: 委任（NS）
+zcom.com -> zex.ex: 委任（NS）
+zex.ex -> zdev.dev: 委任（NS）

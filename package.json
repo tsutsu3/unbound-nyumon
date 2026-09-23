@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "node scripts/check-directives.mjs",
+    "figures": "node scripts/build-figures.mjs",
     "export:book": "node scripts/export-book.mjs",
     "private:link": "node scripts/link-private.mjs",
     "book:pdf": "./pandoc/build.sh pdf",

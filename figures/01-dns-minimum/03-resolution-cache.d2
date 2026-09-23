@@ -1,0 +1,40 @@
+# 図3 cache miss と cache hit の比較
+
+# 本文に載せるときは高さで縮むため、図の中の文字を相対的に大きくしておく。
+**.style.font-size: 24
+(** -> **)[*].style.font-size: 20
+(** <-> **)[*].style.font-size: 20
+grid-columns: 2
+grid-gap: 80
+
+miss: 1回目 - キャッシュミス {
+  direction: down
+  stub: スタブリゾルバー
+  full: フルリゾルバー\n（キャッシュは空）
+  root: ルート
+  tld: com. の権威
+  apex: example.com. の権威
+
+  stub -> full: 問い合わせ
+  full <-> root: ① 問い合わせ → 委任応答
+  full <-> tld: ② 問い合わせ → 委任応答
+  full <-> apex: ③ 問い合わせ → 答え
+  full -> stub: TTL つきの答えを返す
+}
+
+hit: 2回目 - キャッシュヒット {
+  direction: down
+  stub: スタブリゾルバー
+  full: フルリゾルバー\n（答えを保存済み）
+  auth: 権威 DNS サーバー {
+    style.stroke-dash: 3
+    style.opacity: 0.4
+  }
+
+  stub -> full: 同じ問い合わせ
+  full -> stub: TTL が減った答えを返す
+  full -> auth: 問い合わせは発生しない {
+    style.stroke-dash: 3
+    style.opacity: 0.4
+  }
+}

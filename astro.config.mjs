@@ -13,6 +13,7 @@ import {
   SITE_URL,
 } from "./book.config.mjs";
 import { bookColumns } from "./src/plugins/book-columns.mjs";
+import { bookFigures } from "./src/plugins/book-figures.mjs";
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -88,8 +89,9 @@ export default defineConfig({
   // (Phase 0 からの方針)。
   redirects: { "/": `/${DEFAULT_LOCALE}/` },
   markdown: {
-    // 独自の column Directive だけを変換する。標準の Aside は Starlight が処理する。
-    processor: satteri({ mdastPlugins: [bookColumns()] }),
+    // 独自の column Directive と、画像だけの段落 (図) を変換する。
+    // 標準の Aside は Starlight が処理する。
+    processor: satteri({ mdastPlugins: [bookColumns(), bookFigures()] }),
   },
   integrations: [
     starlight({

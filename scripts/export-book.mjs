@@ -202,7 +202,9 @@ function transform(body) {
     .map((line, i) => {
       if (inFence[i]) return line;
       const pandocDirective = rewriteDirective(line);
-      return rewriteLinks(pandocDirective.replace(/^(#{1,5})(\s)/, "#$1$2"));
+      return rewriteImages(
+        rewriteLinks(pandocDirective.replace(/^(#{1,5})(\s)/, "#$1$2")),
+      );
     })
     .join("\n")
     .trim();
@@ -247,4 +249,16 @@ function rewriteLinks(line) {
     const slug = target.replace(/\/$/, "").split("/").join("-");
     return `](#p-${slug})`;
   });
+}
+
+/**
+ * 図は web では `/figures/...` で解決する (`public/` に置いてある)。Pandoc は
+ * 先頭のスラッシュを絶対パスとして扱うため、相対パスへ直す。解決は
+ * `pandoc/build.sh` の `--resource-path` にある `public` が引き受ける。
+ *
+ *   ![図1 ...](/figures/01-dns-minimum/01-actors.svg)
+ *     -> ![図1 ...](figures/01-dns-minimum/01-actors.svg)
+ */
+function rewriteImages(line) {
+  return line.replace(/\]\(\/figures\//g, "](figures/");
 }
