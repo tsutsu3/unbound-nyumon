@@ -65,7 +65,7 @@ common=(
   --metadata-file=build/book/meta.yaml
   --from=markdown
   --lua-filter=pandoc/filters/asides.lua
-  --resource-path=.:src:src/assets:build/book
+  --resource-path=.:src:src/assets:public:build/book
   --standalone
 )
 
