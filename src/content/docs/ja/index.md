@@ -1,10 +1,10 @@
 ---
 title: Unbound入門
-description: DNS の基礎から Unbound の設定までを、実測とソースコードで裏を取りながら解説する入門書です。
+description: DNS の基礎から Unbound を解説する入門書です。
 tableOfContents: false
 # 本のトップなので splash にせず、サイドバー (目次) を残す
 hero:
-  tagline: DNS の基礎から、Unbound の設定を目的に応じて組み立てられるところまで。挙動は実測とソースコードで確かめます。
+  tagline: DNS の基礎から Unbound を解説する入門書です。
   image:
     file: ../../../assets/mark-dark.svg
     alt: ""
