@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Unbound入門">
+  <!-- 本書独自のマーク。ルートから葉へたどる名前解決の経路を表す。Unbound のロゴは使わない。 -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4">
+    <path d="M16 6 8 16" stroke="#c3c3e3"/>
+    <path d="M16 6 24 16 16 26" stroke="#2b2a8f"/>
+  </g>
+  <circle cx="16" cy="6" r="3.4" fill="#2b2a8f"/>
+  <circle cx="8" cy="16" r="3" fill="#c3c3e3"/>
+  <circle cx="24" cy="16" r="3.4" fill="#2b2a8f"/>
+  <circle cx="16" cy="26" r="4" fill="#1fc6da"/>
+</svg>

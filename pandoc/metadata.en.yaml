@@ -1,0 +1,20 @@
+---
+# 英語版 (Phase 3) の組版設定。book.config.mjs の locales に `en` を足すと使われる。
+# 書名と lang は build/book/meta.yaml から渡る。版面は日本語版に合わせて A5 にしている。
+documentclass: book
+classoption:
+  - a5paper
+  - openany
+geometry:
+  - top=18mm
+  - bottom=20mm
+  - inner=18mm
+  - outer=14mm
+toc: true
+toc-depth: 2
+numbersections: true
+secnumdepth: 2
+colorlinks: true
+linkcolor: NavyBlue
+urlcolor: NavyBlue
+---

@@ -5,13 +5,26 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/check-directives.mjs && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "node scripts/check-directives.mjs",
+    "export:book": "node scripts/export-book.mjs",
+    "private:link": "node scripts/link-private.mjs",
+    "book:pdf": "./pandoc/build.sh pdf",
+    "book:sample:pdf": "./pandoc/build.sh pdf --sample",
+    "book:epub": "./pandoc/build.sh epub",
+    "book:html": "./pandoc/build.sh html"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/lexend": "^5.3.0",
+    "@fontsource-variable/noto-sans-jp": "^5.3.0",
     "astro": "^7.2.10",
     "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@astrojs/markdown-satteri": "0.4.0"
   }
 }

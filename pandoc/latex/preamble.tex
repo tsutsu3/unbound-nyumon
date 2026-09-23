@@ -1,0 +1,53 @@
+% コラムと注意書きの枠。言語に依存しないので、どのロケールの PDF でも共通に使う。
+% 和文組版の設定は pandoc/metadata.ja.yaml (ltjsbook) が持つ。
+% pandoc/build.sh が --include-in-header で読み込む。
+
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+
+% web のテーマ (src/styles/theme.css) のインディゴに揃える
+\definecolor{columnframe}{HTML}{2B2A8F}
+\definecolor{columnback}{HTML}{F6F7FB}
+\definecolor{noteframe}{HTML}{3B7DD8}
+\definecolor{tipframe}{HTML}{8B5CF6}
+\definecolor{cautionframe}{HTML}{D97706}
+\definecolor{dangerframe}{HTML}{DC2626}
+
+% 「実装から見ると」コラム。引数は 1 = コラム名 (ロケールごと)、2 = バージョン (例: Unbound 1.26.0)。
+% 読み飛ばせる塊として、本文から独立した枠にする。
+\newtcolorbox{implcolumn}[2]{%
+  enhanced,
+  breakable,
+  colback=columnback,
+  colframe=columnframe,
+  coltitle=white,
+  fonttitle=\bfseries\small,
+  fontupper=\small,
+  boxrule=0.4pt,
+  leftrule=2pt,
+  arc=1mm,
+  top=4pt, bottom=4pt,
+  title={#1\hfill\texttt{\footnotesize #2}},
+}
+
+% 注意書き。引数はタイトル。
+\newtcolorbox{bookaside}[2]{%
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=#1,
+  coltitle=#1,
+  colbacktitle=white,
+  fonttitle=\bfseries\small,
+  fontupper=\small,
+  boxrule=0.4pt,
+  leftrule=2pt,
+  arc=0.5mm,
+  top=4pt, bottom=4pt,
+  title={#2},
+}
+
+\newenvironment{bookasidenote}[1]{\begin{bookaside}{noteframe}{#1}}{\end{bookaside}}
+\newenvironment{bookasidetip}[1]{\begin{bookaside}{tipframe}{#1}}{\end{bookaside}}
+\newenvironment{bookasidecaution}[1]{\begin{bookaside}{cautionframe}{#1}}{\end{bookaside}}
+\newenvironment{bookasidedanger}[1]{\begin{bookaside}{dangerframe}{#1}}{\end{bookaside}}

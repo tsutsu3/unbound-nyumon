@@ -19,3 +19,18 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+/references/
+/planning/
+/research/
+
+/private/
+
+# generated book artifacts (pandoc/build.sh / scripts/export-book.mjs)
+/build/
+
+# 非公開ページ。pnpm private:link がシンボリックリンクを張る
+# (ディレクトリではなくリンクなので、末尾に / を付けない)
+/src/content/docs/*/07-security-privacy
+/src/content/docs/*/08-dnssec
+/src/content/docs/*/10-operations-troubleshooting
+/src/content/docs/*/appendix/undocumented

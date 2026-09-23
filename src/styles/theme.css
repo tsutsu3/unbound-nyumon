@@ -1,0 +1,147 @@
+/*
+ * サイト全体のテーマ。
+ */
+
+:root {
+  --unbound-navy: #14134a;
+  --unbound-indigo: #2b2a8f;
+  --unbound-cyan: #1fc6da;
+
+  --sl-font: "Noto Sans JP Variable", system-ui, sans-serif;
+  --sl-font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --book-font-heading:
+    "Lexend Variable", "Noto Sans JP Variable", system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------------ *
+ * レイアウト
+ *
+ * 本文の 1 行を長めに取る。右の目次を狭くして、その分を本文に回す。
+ * ------------------------------------------------------------------ */
+
+:root {
+  --sl-content-width: 50rem;
+  /* 右の目次の幅。左のナビ (--sl-sidebar-width) とは別に持つ */
+  --book-toc-width: 14rem;
+}
+
+/* Starlight の TwoColumnContent の式を、--sl-sidebar-width の代わりに --book-toc-width で組み直す */
+@media (min-width: 72rem) {
+  .right-sidebar-container {
+    width: max(
+      var(--book-toc-width),
+      calc(
+        var(--book-toc-width) +
+          (100% - var(--sl-content-width) - var(--book-toc-width)) / 2
+      )
+    );
+  }
+
+  [data-has-sidebar][data-has-toc] .main-pane {
+    width: min(
+      calc(100% - var(--book-toc-width)),
+      calc(
+        var(--sl-content-width) +
+          (100% - var(--sl-content-width) - var(--book-toc-width)) / 2
+      )
+    );
+  }
+}
+
+/* Dark mode colors. */
+:root {
+  --sl-color-accent-low: #1d213e;
+  --sl-color-accent: #525cc4;
+  --sl-color-accent-high: #bec6ec;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #e8eef6;
+  --sl-color-gray-2: #c1c9d2;
+  --sl-color-gray-3: #96a6b7;
+  --sl-color-gray-4: #4c5a69;
+  --sl-color-gray-5: #2d3948;
+  --sl-color-gray-6: #1c2836;
+  --sl-color-black: #13191f;
+}
+/* Light mode colors. */
+:root[data-theme="light"] {
+  --sl-color-accent-low: #cfd5f2;
+  --sl-color-accent: #3d43a9;
+  --sl-color-accent-high: #272d5b;
+  --sl-color-white: #13191f;
+  --sl-color-gray-1: #1c2836;
+  --sl-color-gray-2: #2d3948;
+  --sl-color-gray-3: #4c5a69;
+  --sl-color-gray-4: #7e8d9e;
+  --sl-color-gray-5: #bbc3cc;
+  --sl-color-gray-6: #e8eef6;
+  --sl-color-gray-7: #f3f7fa;
+  --sl-color-black: #ffffff;
+}
+
+/* ------------------------------------------------------------------ *
+ * 書体
+ * ------------------------------------------------------------------ */
+
+.site-title,
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6),
+h1[data-page-title] {
+  font-family: var(--book-font-heading);
+  letter-spacing: 0.01em;
+}
+
+.site-title {
+  font-weight: 600;
+  color: var(--sl-color-white);
+}
+
+/* ------------------------------------------------------------------ *
+ * トップページのヒーロー (ja/index.md の `hero`)
+ *
+ * ライト / ダークどちらでもネイビーの面にする。
+ * ------------------------------------------------------------------ */
+
+[data-has-hero] .hero {
+  position: relative;
+  overflow: hidden;
+  margin-top: 1rem;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+  border: 1px solid #2c2d6e;
+  border-radius: 1rem;
+  background-color: var(--unbound-navy);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.07' stroke-width='1.5'%3E%3Cpath d='M120 20 60 100M120 20 180 100 120 180M60 100 20 180M180 100 220 180'/%3E%3C/g%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Ccircle cx='120' cy='20' r='5'/%3E%3Ccircle cx='60' cy='100' r='5'/%3E%3Ccircle cx='180' cy='100' r='5'/%3E%3Ccircle cx='20' cy='180' r='5'/%3E%3Ccircle cx='220' cy='180' r='5'/%3E%3C/g%3E%3Ccircle cx='120' cy='180' r='6' fill='%231fc6da' fill-opacity='0.25'/%3E%3C/svg%3E");
+  background-position: right -40px top -20px;
+  background-repeat: no-repeat;
+  background-size: min(60%, 360px);
+}
+
+[data-has-hero] .hero h1 {
+  color: #ffffff;
+  font-size: clamp(var(--sl-text-3xl), calc(1rem + 3vw), var(--sl-text-5xl));
+  word-break: keep-all;
+}
+
+[data-has-hero] .hero .tagline {
+  color: #c9cbe8;
+}
+
+[data-has-hero] .hero > img {
+  width: min(40%, 8rem);
+}
+
+@media (min-width: 50rem) {
+  [data-has-hero] .hero > img {
+    order: 2;
+    width: min(70%, 12rem);
+  }
+}
+
+/* ヒーロー内のボタン。ネイビーの面の上で埋もれないよう、テーマに関係なくシアンにする */
+[data-has-hero] .hero .sl-link-button.primary {
+  border-color: var(--unbound-cyan);
+  background-color: var(--unbound-cyan);
+  color: var(--unbound-navy);
+}
+
+[data-has-hero] .hero .sl-link-button:not(.primary) {
+  color: #ffffff;
+}

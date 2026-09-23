@@ -1,0 +1,20 @@
+---
+# 日本語版の組版設定。書名と lang は book.config.mjs の locales から
+# build/book/meta.yaml に書き出され、--metadata-file で渡る。
+documentclass: ltjsbook
+classoption:
+  - a5paper
+  - openany
+geometry:
+  - top=18mm
+  - bottom=20mm
+  - inner=18mm
+  - outer=14mm
+toc: true
+toc-depth: 2
+numbersections: true
+secnumdepth: 2
+colorlinks: true
+linkcolor: NavyBlue
+urlcolor: NavyBlue
+---
