@@ -38,9 +38,9 @@ A は IPv4 アドレス、AAAA は IPv6 アドレスを表します。同じ名�
 
 ### CNAME
 
-CNAME は、ある名前が別の名前の別名であることを表します。`www.example.com.` に `web.example.com.` を値とする CNAME があれば、`www.example.com.` を引いた側は `web.example.com.` を引き直します。
+CNAME は、ある名前が別の名前の別名であることを表します。`www.example.com` に `web.example.com` を値とする CNAME があれば、`www.example.com` を引いた側は `web.example.com` を引き直します。
 
-CNAME には制約があります。CNAME を持つ名前は、他の型のデータを持てません。A と CNAME を同じ名前に共存させることはできません。例外は DNSSEC 用のレコードで、これは第8章で扱います。第5章で `local-data` を書くときは、この制約に従う必要があります。
+CNAME には制約があります。CNAME を持つ名前は、他の型のデータを持てません[^cname]。A と CNAME を同じ名前に共存させることはできません。例外は DNSSEC 用のレコードで、これは第8章で扱います。第5章で `local-data` を書くときは、この制約に従う必要があります。
 
 ### NS
 
@@ -48,16 +48,22 @@ NS は、そのゾーンの権威 DNS サーバーの名前を表します。[�
 
 ### PTR
 
-PTR は、IP アドレスから名前を引くために使います。逆引き用の名前は `in-addr.arpa.`（IPv4）や `ip6.arpa.`（IPv6）の下に作られ、`192.0.2.1` であれば `1.2.0.192.in-addr.arpa.` の PTR を引きます。
+PTR は、IP アドレスから名前を引くために使います。逆引き用の名前は `in-addr.arpa`（IPv4）や `ip6.arpa`（IPv6）の下に作られ、`192.0.2.1` であれば `1.2.0.192.in-addr.arpa` の PTR を引きます。
 
-PTR は A の裏返しではありません。A と PTR は別のゾーンにある別のデータであり、片方を書いたからといってもう片方が自動的にできるわけではありません。
+PTR は A の裏返しではありません。A と PTR は別のゾーンにある別のデータであり、片方を書いたからといってもう片方が自動的にできるわけではありません[^ptr]。
 
 ### TXT
 
-TXT は文字列を保持します。1つの TXT RR は文字列を複数持つことができ、その1つ1つに長さの上限があります。この境界が実際に問題になるのは第5章なので、ここでは「文字列を持つ型」とだけ押さえておきます。
+TXT は文字列を保持します。1つの TXT RR は文字列を複数持つことができ、その1つ1つに長さの上限があります[^txt]。この境界が実際に問題になるのは第5章なので、ここでは「文字列を持つ型」とだけ押さえておきます。
 
 ### SOA
 
 SOA は、ゾーンの管理情報を持つ RR です。ゾーン頂点に必ず置かれ、そのゾーンの更新や再取得に関する値を持ちます。
 
 SOA の各フィールドのうち MINIMUM は、そのゾーンに対する否定応答をどれだけキャッシュしてよいかに関わります。つまり SOA は、存在しない名前の扱いにも影響します。この関係は第4章で扱います。
+
+[^cname]: [RFC 2181 の 10.1. CNAME resource records](https://www.rfc-editor.org/rfc/rfc2181#section-10.1)
+
+[^ptr]: [RFC 2181 の 10.2. PTR records](https://www.rfc-editor.org/rfc/rfc2181#section-10.2)
+
+[^txt]: [RFC 1035 の 3.3. Standard RRs](https://www.rfc-editor.org/rfc/rfc1035#section-3.3) が `<character-string>` を定義し、[3.3.14. TXT RDATA format](https://www.rfc-editor.org/rfc/rfc1035#section-3.3.14) が TXT の RDATA を定める。
