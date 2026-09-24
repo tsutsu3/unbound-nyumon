@@ -1,0 +1,30 @@
+# 図2 Pi-hole と Unbound の役割分担
+
+# 本文に載せるときは高さで縮むため、図の中の文字を相対的に大きくしておく。
+**.style.font-size: 24
+(** -> **)[*].style.font-size: 20
+(** <-> **)[*].style.font-size: 20
+direction: down
+
+client: LAN の端末
+
+pihole: Pi-hole（FTL） {
+  filter: ブロックリストの適用
+  dhcp: DHCP
+}
+
+unbound: Unbound {
+  recurse: 再帰解決
+  cache: キャッシュ
+  dnssec: DNSSEC 検証
+}
+
+auth: 権威 DNS サーバー {
+  root: ルート（.）
+  tld: com.
+  apex: example.com.
+}
+
+client -> pihole: 名前解決要求
+pihole -> unbound: 残った問い合わせを転送する
+unbound <-> auth: 委任をたどって\n複数回問い合わせる

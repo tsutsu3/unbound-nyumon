@@ -1,0 +1,26 @@
+# 図1 フォワーダー、フルリゾルバー、権威 DNS サーバーの位置と問い合わせの向き
+
+# 本文に載せるときは高さで縮むため、図の中の文字を相対的に大きくしておく。
+**.style.font-size: 24
+(** -> **)[*].style.font-size: 20
+(** <-> **)[*].style.font-size: 20
+direction: down
+
+stub: スタブリゾルバー
+
+fwd: フォワーダー {
+  label: フォワーダー\n（dnsmasq / Pi-hole / AdGuard Home）
+}
+
+full: フルリゾルバー {
+  label: フルリゾルバー\n（Unbound / BIND / PowerDNS Recursor）
+}
+
+auth: 権威 DNS サーバー {
+  label: 権威 DNS サーバー\n（NSD / BIND / PowerDNS Authoritative）
+}
+
+stub -> fwd: 名前解決要求
+fwd -> full: 上流へ転送する\n（自分では解決しない）
+stub -> full: 名前解決要求
+full <-> auth: 委任をたどって\n複数回問い合わせる
